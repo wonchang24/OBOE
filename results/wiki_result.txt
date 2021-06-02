@@ -1,5 +1,5 @@
 wiki
-0.5 0.1
+1.0 0.6
 Reprobability: 0.4
 Max_iter: 50
 F1_top@10: 0.05029660611891559

@@ -23,6 +23,7 @@ def extract_features(flag, path, n_user):
         features_train = feature.extract_features(output_path, df_train, mtx)
     else:
         if os.path.isfile(output_path):
+            print("Load features.........")
             features_train = util.read_features_from_file(output_path)
         else:
             sys.exit("A file of features is not existed. Please extract them first.")
@@ -52,6 +53,7 @@ def predict_FExtra_scores(flag, path, features_train, mtx, n_user):
                 pbar.update(1)
             pbar.close()
     else:
+        print("Load FExtra scores........")
         if not os.path.isfile(output_path):
             sys.exit("A file of FExtra scores is not existed. Please predict them first.")
 
@@ -63,7 +65,7 @@ def predict_FExtra_scores(flag, path, features_train, mtx, n_user):
 
 
 def process(path, result_path, mtx, df_train, df_test, data_name, n_user, c, sign_thres, pre_analysis, m_iter):
-    print("Start processing.................")
+    print("Run OBOE......................")
     input_path = path + "_FExtra.txt"
     group_test = util.group_by_test(df_test)
 
@@ -78,8 +80,6 @@ def process(path, result_path, mtx, df_train, df_test, data_name, n_user, c, sig
         recall_bottom[n] = 0
         ndcg_bottom[n] = 0
     num_snode, num_top_err, num_bottom_err = 0.0, 0.0, 0.0
-
-    print("test's num : " + str(len(df_test)))
 
     with open(input_path, 'r') as f:
         pbar = tqdm.tqdm(total=len(df_test))
@@ -152,6 +152,7 @@ def process(path, result_path, mtx, df_train, df_test, data_name, n_user, c, sig
                       + str(2*precision_bottom[n]*recall_bottom[n]/(precision_bottom[n]+recall_bottom[n])) + "\n")
         for n in top_n:
             res.write("NDCG_bottom@" + str(n) + ": " + str(ndcg_bottom[n] / (num_snode-num_bottom_err)) + "\n")
+    print("Finish OBOE.")
 
 
 def OBOE(snode, dic_ans, mtx, scores_snode, sign_thres, pre_analysis, m_iter, c, snode_nodes, top_n, n_user):
@@ -164,8 +165,6 @@ def OBOE(snode, dic_ans, mtx, scores_snode, sign_thres, pre_analysis, m_iter, c,
 
 
 def init(config):
-    print("Start OBOE......................")
-    # sign threshold (p, n) => (0.5+p, 0.5-n)
     if config.dataset == "wiki":
         dataset_name = "Wikipedia"
         n_user = 7118
@@ -190,7 +189,7 @@ def init(config):
     else:
         df_test, mtx = predict_FExtra_scores(False, path, features_train, mtx, n_user)
 
-    if config.func == "oboe":
+    if config.func == "run":
         process(path, result_path, mtx, df_train, df_test, config.dataset,
                 n_user, config.c, [config.p_thres, config.n_thres], pre_analysis, config.m_iter)
     else:
@@ -201,14 +200,13 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run OBOE.")
 
     parser.add_argument("--dataset", nargs="?", default="wiki",
-                        help="Dataset name.")
-    parser.add_argument("--func", default="oboe",
-                        help="select a function of (extract, predict, oboe). "
-                             "(Extract features, predict FExtra scores, start oboe)")
-    parser.add_argument("--p_thres", type=float, default=0.4,
-                        help="Positive threshold (beta_+). Default is 0.4")
-    parser.add_argument("--n_thres", type=float, default=0.4,
-                        help="Negative threshold (beta_-). Default is 0.4")
+                        help="Dataset name. Default is \"wiki\"")
+    parser.add_argument("--func", default="run",
+                        help="select a function of (extract, predict, run). Default is \"run\"")
+    parser.add_argument("--p_thres", type=float, default=1.0,
+                        help="Positive threshold (beta_+). Default is 1.0")
+    parser.add_argument("--n_thres", type=float, default=0.6,
+                        help="Negative threshold (beta_-). Default is 0.6")
     parser.add_argument("--c", type=float, default=0.4,
                         help="Restart probability. Default is 0.4.")
     parser.add_argument("--m_iter", type=int, default=50,

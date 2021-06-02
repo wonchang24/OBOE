@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from src import matrix
+import tqdm
 
 
 class Feature:
@@ -19,10 +20,8 @@ class Feature:
 def extract_features(path, df_target, mtx):
     with open(path, 'w') as f:
         features = []
-        print(df_target.shape[0])
+        pbar = tqdm.tqdm(total=df_target.shape[0])
         for i in range(df_target.shape[0]):
-            if i % 10000 == 0:
-                print(i)
             snode = df_target.iloc[i].sid
             tnode = df_target.iloc[i].tid
             sign = df_target.iloc[i].feedback
@@ -37,6 +36,8 @@ def extract_features(path, df_target, mtx):
             f.write(str(snode))
             f.write('\t' + str(tnode) + '\t')
             f.write('\t'.join(map(str, lt_degree)) + '\n')
+            pbar.update(1)
+        pbar.close()
     return features
 
 

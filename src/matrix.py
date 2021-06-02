@@ -43,13 +43,13 @@ def create_mtx(df, df_pos, df_neg, n_user):
 
 # set matrix for OBOE
 def set_OBOE_mtx(mtx, scores, n_user, sign_thres, pre_analysis):
-    if (0.5 + sign_thres[0]) > (0.5 - sign_thres[1]):
-        scores = np.array([1 if x >= (0.5 + sign_thres[0]) else x for x in scores])
-        scores = np.array([-1 if x < (0.5 - sign_thres[1]) else x for x in scores])
+    if (sign_thres[0]) > (1.0 - sign_thres[1]):
+        scores = np.array([1 if x >= (sign_thres[0]) else x for x in scores])
+        scores = np.array([-1 if x < (1.0 - sign_thres[1]) else x for x in scores])
         scores = np.array([0 if (x != 1) & (x != -1) else x for x in scores])
     else:
-        scores = np.array([-1 if x < (0.5 + sign_thres[0]) else x for x in scores])
-        scores = np.array([1 if x >= (0.5 - sign_thres[1]) else x for x in scores])
+        scores = np.array([-1 if x < (sign_thres[0]) else x for x in scores])
+        scores = np.array([1 if x >= (1.0 - sign_thres[1]) else x for x in scores])
         scores = np.array([2 if (x != 1) & (x != -1) else x for x in scores])
     # pp (np) means that tnode has positive(negative) scores and it will give positive (positive) scores to neighbors.
     pp_sid, pn_sid, np_sid, nn_sid = [], [], [], []

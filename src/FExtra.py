@@ -30,7 +30,6 @@ class FExtra:
         # train LR and test
         self.lr = LogisticRegression(class_weight=class_weight, max_iter=1000)
         self.lr.fit(vec_train_robust_scaled, sign_train)
-        print(self.lr.classes_)
         self.classes = self.lr.classes_
 
     def compute_scores(self, features_test):
