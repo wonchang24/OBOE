@@ -26,7 +26,7 @@ It includes parameter and accuracies in top-k and bottom-k tasks of *OBOE*.
 ```
 --dataset                 Dataset name. (default: "wiki")
 --func                    Select a function of (extract, predict, run). (default: "run")
---p_thres                 Positive threshold (beta_+). (default: 0.9)
+--p_thres                 Positive threshold (beta_+). (default: 1.0)
 --n_thres                 Negative threshold (beta_-). (default: 0.6)
 --c                       Restart probability. (default: 0.4)
 --m_iter                  Number of maximum iterations. (default: 50) 
